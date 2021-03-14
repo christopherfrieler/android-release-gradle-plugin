@@ -14,6 +14,6 @@ jobs:
         uses: christopherfrieler/gradle-wrapper-action@0.1.0
         with:
           arguments: |
-            check build
+            check build kotlinSourcesJar
           artifacts: |
             jars build/libs/android-release-gradle-plugin-*.jar

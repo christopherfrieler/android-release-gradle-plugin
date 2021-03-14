@@ -5,3 +5,5 @@ It's a [Gradle](https://docs.gradle.org/current/userguide/userguide.html) projec
 Build the plugin: `./gradlew build`
 
 Run unit tests: `./gradlew test`
+
+Package the sources-jar: `./gradlew kotlinSourcesJar`
