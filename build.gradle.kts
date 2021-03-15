@@ -1,10 +1,14 @@
+import org.gradle.jvm.tasks.Jar
+
 plugins {
     `java-gradle-plugin`
     kotlin("jvm") version "1.4.31"
+    id("org.jetbrains.dokka") version "1.4.20"
 }
 
 repositories {
     mavenCentral()
+    maven(url = "https://dl.bintray.com/kotlin/kotlinx/")
 }
 
 group = "rocks.frieler.android"
@@ -23,6 +27,14 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+
+    register("kdocJar", Jar::class) {
+        dependsOn(dokkaHtml)
+        from("${buildDir}/dokka")
+        archiveClassifier.set("kdoc")
+    }
 }
