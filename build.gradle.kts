@@ -4,6 +4,7 @@ plugins {
     `java-gradle-plugin`
     kotlin("jvm") version "1.4.31"
     id("org.jetbrains.dokka") version "1.4.20"
+    id("maven-publish")
 }
 
 repositories {
@@ -36,5 +37,32 @@ tasks {
         dependsOn(dokkaHtml)
         from("${buildDir}/dokka")
         archiveClassifier.set("kdoc")
+    }
+}
+
+publishing {
+    publications {
+        afterEvaluate {
+            getByName("pluginMaven", MavenPublication::class) {
+                pom {
+                    name.set("android-release-gradle-plugin")
+                    description.set("A Gradle plugin to automate scm-releases of android apps.")
+                    url.set("https://github.com/christopherfrieler/android-release-gradle-plugin")
+                    licenses {
+                        license {
+                            name.set("MIT")
+                            url.set("https://opensource.org/licenses/MIT")
+                        }
+                    }
+                    scm { url.set("https://github.com/christopherfrieler/android-release-gradle-plugin") }
+                    developers {
+                        developer { name.set("Christopher Frieler") }
+                    }
+                }
+
+                artifact(tasks.kotlinSourcesJar)
+                artifact(tasks.getByName("kdocJar"))
+            }
+        }
     }
 }
