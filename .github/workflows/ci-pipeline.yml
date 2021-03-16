@@ -1,0 +1,20 @@
+name: CI-Pipeline
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      - name: Build and check plugin
+        uses: christopherfrieler/gradle-wrapper-action@0.1.0
+        with:
+          arguments: |
+            check build kotlinSourcesJar kdocJar generateMetadataFileForPluginMavenPublication
+          artifacts: |
+            jars build/libs/android-release-gradle-plugin-*.jar
+            pom build/publications/pluginMaven/pom-default.xml
