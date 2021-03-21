@@ -14,4 +14,13 @@ internal class AndroidReleasePluginTest {
 
         assertNotNull(project.plugins.findPlugin(AndroidReleasePlugin::class.java))
     }
+
+    @Test
+    internal fun `plugin adds extension to configure it`() {
+        val project = ProjectBuilder.builder().build()
+
+        project.pluginManager.apply("rocks.frieler.android.release")
+
+        assert(project.extensions.findByName("releasing") is AndroidReleasePluginExtension)
+    }
 }

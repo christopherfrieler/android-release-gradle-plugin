@@ -8,5 +8,6 @@ import org.gradle.api.Project
  */
 class AndroidReleasePlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        val config = target.extensions.create("releasing", AndroidReleasePluginExtension::class.java)
     }
 }
