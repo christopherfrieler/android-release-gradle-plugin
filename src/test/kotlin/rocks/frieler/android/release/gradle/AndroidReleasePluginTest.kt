@@ -36,4 +36,16 @@ internal class AndroidReleasePluginTest {
 
         assert(project.tasks.findByName("performRelease") is PerformRelease)
     }
+
+    @Test
+    internal fun `plugin adds PrepareNextDevelopmentVersion task`() {
+        val project = ProjectBuilder.builder().build()
+
+        project.pluginManager.apply("rocks.frieler.android.release")
+        with(project.extensions.getByType(AndroidReleasePluginExtension::class.java)) {
+            scm = { mock() }
+        }
+
+        assert(project.tasks.findByName("prepareNextDevelopmentVersion") is PrepareNextDevelopmentVersion)
+    }
 }

@@ -13,5 +13,9 @@ class AndroidReleasePlugin : Plugin<Project> {
         target.tasks.register("performRelease", PerformRelease::class.java) {
             it.scmRepository = config.scm(target)
         }
+        target.tasks.register("prepareNextDevelopmentVersion", PrepareNextDevelopmentVersion::class.java) {
+            it.scmRepository = config.scm(target)
+            it.appModule = config.appModule
+        }
     }
 }

@@ -4,4 +4,5 @@ import org.gradle.api.Project
 
 open class AndroidReleasePluginExtension {
     var scm: (Project) -> GitRepository = { GitRepository(it) }
+    var appModule: String = "app"
 }
