@@ -42,8 +42,8 @@ open class PrepareNextDevelopmentVersion : DefaultTask() {
 
         val newGradleFile = StringBuilder()
         val versionSpecificationPattern = Regex("^\\s*version\\s*=\\s*\"([^\"]*)\"\\s*$")
-        project.file("./build.gradle.kts").readLines().forEach {
-            val match = versionSpecificationPattern.matchEntire(it)
+        project.file("./build.gradle.kts").readLines().forEach { line ->
+            val match = versionSpecificationPattern.matchEntire(line)
             if (match != null) {
                 val currentVersion = match.groups[1]!!.value
                 val versionPattern = Regex("^(\\d+)\\.(\\d+)\\.\\d+$")
@@ -52,9 +52,9 @@ open class PrepareNextDevelopmentVersion : DefaultTask() {
                 val major = versionMatch.groups[1]!!.value.toInt()
                 val minor = versionMatch.groups[2]!!.value.toInt()
                 nextSnapshotVersion = "$major.${minor + 1}.0-SNAPSHOT"
-                newGradleFile.appendLine(match.value.replace(currentVersion, nextSnapshotVersion!!))
+                newGradleFile.appendLineWithSystemEnding(match.value.replace(currentVersion, nextSnapshotVersion!!))
             } else {
-                newGradleFile.appendLine(it)
+                newGradleFile.appendLineWithSystemEnding(line)
             }
         }
         project.file("./build.gradle.kts").writeText(newGradleFile.toString())
@@ -66,13 +66,13 @@ open class PrepareNextDevelopmentVersion : DefaultTask() {
     private fun increaseVersionCode() {
         val newGradleFile = StringBuilder()
         val versionCodeSpecificationPattern = Regex("^\\s*versionCode\\s*=\\s*(\\d+)\\s*$")
-        project.file("$appModule/build.gradle.kts").readLines().forEach {
-            val versionCodeSpecificationMatch = versionCodeSpecificationPattern.matchEntire(it)
+        project.file("$appModule/build.gradle.kts").readLines().forEach { line ->
+            val versionCodeSpecificationMatch = versionCodeSpecificationPattern.matchEntire(line)
             if (versionCodeSpecificationMatch != null) {
                 val currentVersionCode = versionCodeSpecificationMatch.groups[1]!!.value.toInt()
-                newGradleFile.appendLine(versionCodeSpecificationMatch.value.replace(currentVersionCode.toString(), (currentVersionCode + 1).toString()))
+                newGradleFile.appendLineWithSystemEnding(versionCodeSpecificationMatch.value.replace(currentVersionCode.toString(), (currentVersionCode + 1).toString()))
             } else {
-                newGradleFile.appendLine(it)
+                newGradleFile.appendLineWithSystemEnding(line)
             }
         }
         project.file("$appModule/build.gradle.kts").writeText(newGradleFile.toString())

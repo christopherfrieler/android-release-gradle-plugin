@@ -36,15 +36,15 @@ open class PerformRelease : DefaultTask() {
 
         val newGradleFile = StringBuilder()
         val versionSpecificationPattern = Regex("^\\s*version\\s*=\\s*\"([^\"]*)\"\\s*$")
-        project.file("./build.gradle.kts").readLines().forEach {
-            val match = versionSpecificationPattern.matchEntire(it)
+        project.file("./build.gradle.kts").readLines().forEach { line ->
+            val match = versionSpecificationPattern.matchEntire(line)
             if (match != null) {
                 val currentVersion = match.groups[1]!!.value
                 check(currentVersion.endsWith("-SNAPSHOT")) { "current version '$currentVersion' is not a SNAPSHOT!" }
                 releaseVersion = currentVersion.replace("-SNAPSHOT", "")
-                newGradleFile.appendLine(match.value.replace(currentVersion, releaseVersion!!))
+                newGradleFile.appendLineWithSystemEnding(match.value.replace(currentVersion, releaseVersion!!))
             } else {
-                newGradleFile.appendLine(it)
+                newGradleFile.appendLineWithSystemEnding(line)
             }
         }
         project.file("./build.gradle.kts").writeText(newGradleFile.toString())

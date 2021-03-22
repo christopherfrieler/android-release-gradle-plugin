@@ -43,7 +43,7 @@ internal class PerformReleaseTest {
 
         performReleaseTask.performRelease()
 
-        assert(testBuildFile.readText().contains("version = \"1.0.0\"\n"))
+        assert(testBuildFile.readText().contains("version = \"1.0.0\"${System.lineSeparator()}"))
         verify(performReleaseTask.scmRepository).commitAllChanges("\"release 1.0.0\"")
         verify(performReleaseTask.scmRepository).tag("\"1.0.0\"")
     }

@@ -45,14 +45,14 @@ internal class PrepareNextDevelopmentVersionTest {
         val testAppBuildFile = prepareTestBuildFile("versionCode_1_android_build.gradle.kts")
         whenever(project.file("app/build.gradle.kts")).thenReturn(testAppBuildFile)
         val testChangelogFile = Files.createTempFile("changelog", "txt").toFile().apply {
-            writeText("There was a change.\n")
+            writeText("There was a change.${System.lineSeparator()}")
         }
         whenever(project.file("app/src/main/play/release-notes/de-DE/default.txt")).thenReturn(testChangelogFile)
 
         prepareNextDevelopmentVersionTask.prepareNextDevelopmentVersion()
 
-        assert(testRootBuildFile.readText().contains("version = \"1.1.0-SNAPSHOT\"\n"))
-        assert(testAppBuildFile.readText().contains("versionCode = 2\n"))
+        assert(testRootBuildFile.readText().contains("version = \"1.1.0-SNAPSHOT\"${System.lineSeparator()}"))
+        assert(testAppBuildFile.readText().contains("versionCode = 2${System.lineSeparator()}"))
         assert(testChangelogFile.readText() == "")
         verify(prepareNextDevelopmentVersionTask.scmRepository).commitAllChanges("prepare 1.1.0-SNAPSHOT")
     }
