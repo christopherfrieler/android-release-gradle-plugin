@@ -1,5 +1,6 @@
 package rocks.frieler.android.release.gradle
 
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -18,4 +19,11 @@ class AndroidReleasePlugin : Plugin<Project> {
             it.appModule = config.appModule
         }
     }
+}
+
+/**
+ * Configures the [AndroidReleasePlugin].
+ */
+fun Project.releasing(configureAction: Action<in AndroidReleasePluginExtension>) {
+    this.extensions.configure("releasing", configureAction)
 }
