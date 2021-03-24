@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm") version "1.4.31"
     id("org.jetbrains.dokka") version "1.4.20"
     id("maven-publish")
+    id("signing")
 }
 
 repositories {
@@ -13,7 +14,7 @@ repositories {
 }
 
 group = "rocks.frieler.android"
-version = "0.1.0"
+version = "0.2.0-SNAPSHOT"
 
 gradlePlugin {
     plugins {
@@ -71,5 +72,26 @@ publishing {
                 artifact(tasks.getByName("kdocJar"))
             }
         }
+    }
+
+    repositories {
+        maven {
+            name = "sonatype-staging"
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("SONATYPE_USERNAME")
+                password = System.getenv("SONATYPE_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications)
+
+    System.getenv("SIGNING_KEY_ID")?.also { signingKeyId ->
+        project.setProperty("signing.keyId", signingKeyId)
+        project.setProperty("signing.secretKeyRingFile", rootProject.file("$signingKeyId.gpg"))
+        project.setProperty("signing.password", System.getenv("SIGNING_KEY_PASSWORD"))
     }
 }
