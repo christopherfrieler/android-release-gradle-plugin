@@ -1,6 +1,7 @@
 .gradle/
 build/
 
+*.gpg
 
 .idea/
 *.iml
