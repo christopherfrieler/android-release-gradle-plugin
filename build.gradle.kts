@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.dokka") version "1.4.20"
     id("maven-publish")
     id("signing")
+    id("io.codearte.nexus-staging") version "0.22.0"
 }
 
 repositories {
@@ -94,4 +95,12 @@ signing {
         project.setProperty("signing.secretKeyRingFile", rootProject.file("$signingKeyId.gpg"))
         project.setProperty("signing.password", System.getenv("SIGNING_KEY_PASSWORD"))
     }
+}
+
+nexusStaging {
+    packageGroup = project.group as String
+    stagingProfileId = System.getenv("SONATYPE_STAGING_PROFILE_ID")
+    val stagingRepository = publishing.repositories["sonatype-staging"] as MavenArtifactRepository
+    username = stagingRepository.credentials.username
+    password = stagingRepository.credentials.password
 }
