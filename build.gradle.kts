@@ -12,6 +12,7 @@ plugins {
 repositories {
     mavenCentral()
     maven(url = "https://dl.bintray.com/kotlin/kotlinx/")
+    maven(url = "https://dl.bintray.com/korlibs/korlibs/")
 }
 
 group = "rocks.frieler.android"
@@ -42,10 +43,10 @@ tasks {
         useJUnitPlatform()
     }
 
-    register("kdocJar", Jar::class) {
-        dependsOn(dokkaHtml)
-        from("${buildDir}/dokka")
-        archiveClassifier.set("kdoc")
+    register("javadocJar", Jar::class) {
+        dependsOn(dokkaJavadoc)
+        from("${buildDir}/dokka/javadoc")
+        archiveClassifier.set("javadoc")
     }
 }
 
@@ -70,7 +71,7 @@ publishing {
                 }
 
                 artifact(tasks.kotlinSourcesJar)
-                artifact(tasks.getByName("kdocJar"))
+                artifact(tasks.getByName("javadocJar"))
             }
         }
     }
