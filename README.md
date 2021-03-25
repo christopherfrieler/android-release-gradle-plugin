@@ -1,4 +1,6 @@
 # android-release-gradle-plugin
+[![Maven Central](https://img.shields.io/maven-central/v/rocks.frieler.android/android-release-gradle-plugin.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22rocks.frieler.android%22%20AND%20a:%22android-release-gradle-plugin%22)
+
 A Gradle plugin to automate scm-releases of Android apps
 
 **Note:** This plugin was created together with certain Android app projects.
