@@ -20,7 +20,7 @@ version = "0.2.0-SNAPSHOT"
 
 gradlePlugin {
     plugins {
-        create("android-release-gradle-plugin") {
+        create(project.name) {
             id = "rocks.frieler.android.release"
             implementationClass = "rocks.frieler.android.release.gradle.AndroidReleasePlugin"
         }
@@ -52,26 +52,37 @@ tasks {
 
 publishing {
     publications {
+        fun org.gradle.api.publish.maven.MavenPom.addCommonPublicationSettings() {
+            url.set("https://github.com/christopherfrieler/android-release-gradle-plugin")
+            licenses {
+                license {
+                    name.set("MIT")
+                    url.set("https://opensource.org/licenses/MIT")
+                }
+            }
+            scm { url.set("https://github.com/christopherfrieler/android-release-gradle-plugin") }
+            developers {
+                developer { name.set("Christopher Frieler") }
+            }
+        }
+
         afterEvaluate {
             getByName("pluginMaven", MavenPublication::class) {
                 pom {
-                    name.set("android-release-gradle-plugin")
+                    name.set(project.name)
                     description.set("A Gradle plugin to automate scm-releases of android apps.")
-                    url.set("https://github.com/christopherfrieler/android-release-gradle-plugin")
-                    licenses {
-                        license {
-                            name.set("MIT")
-                            url.set("https://opensource.org/licenses/MIT")
-                        }
-                    }
-                    scm { url.set("https://github.com/christopherfrieler/android-release-gradle-plugin") }
-                    developers {
-                        developer { name.set("Christopher Frieler") }
-                    }
+                    addCommonPublicationSettings()
                 }
 
                 artifact(tasks.kotlinSourcesJar)
                 artifact(tasks.getByName("javadocJar"))
+            }
+            getByName("${project.name}PluginMarkerMaven", MavenPublication::class) {
+                pom {
+                    name.set("${project.name}-marker")
+                    description.set("Gradle plugin marker for ${project.name}")
+                    addCommonPublicationSettings()
+                }
             }
         }
     }
