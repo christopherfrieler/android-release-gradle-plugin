@@ -89,9 +89,8 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications)
-
     System.getenv("SIGNING_KEY_ID")?.also { signingKeyId ->
+        sign(publishing.publications)
         project.setProperty("signing.keyId", signingKeyId)
         project.setProperty("signing.secretKeyRingFile", rootProject.file("$signingKeyId.gpg"))
         project.setProperty("signing.password", System.getenv("SIGNING_KEY_PASSWORD"))
