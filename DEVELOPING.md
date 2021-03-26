@@ -10,4 +10,5 @@ Package the sources-jar: `./gradlew kotlinSourcesJar`
 
 Package the kdoc-jar: `./gradlew kdocJar`
 
-Generate pom.xml: `./gradlew generateMetadataFileForPluginMavenPublication`
+Publish to your local maven repository: `./gradlew publishToMavenLocal`.
+This way you can test the plugin manually in another project by pulling your current SNAPSHOT from your local repository.
