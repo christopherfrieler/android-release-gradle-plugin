@@ -3,7 +3,7 @@ import org.gradle.jvm.tasks.Jar
 plugins {
     `java-gradle-plugin`
     kotlin("jvm") version "1.4.31"
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "1.4.32"
     id("maven-publish")
     id("signing")
     id("io.codearte.nexus-staging") version "0.22.0"
@@ -11,8 +11,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven(url = "https://dl.bintray.com/kotlin/kotlinx/")
-    maven(url = "https://dl.bintray.com/korlibs/korlibs/")
 }
 
 group = "rocks.frieler.android"
