@@ -8,7 +8,7 @@ Run unit tests: `./gradlew test`
 
 Package the sources-jar: `./gradlew kotlinSourcesJar`
 
-Package the kdoc-jar: `./gradlew kdocJar`
+Package the kdoc-jar: `./gradlew javadocJar`
 
 Publish to your local maven repository: `./gradlew publishToMavenLocal`.
 This way you can test the plugin manually in another project by pulling your current SNAPSHOT from your local repository.
