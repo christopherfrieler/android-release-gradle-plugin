@@ -14,7 +14,7 @@ repositories {
 }
 
 group = "rocks.frieler.android"
-version = "0.2.0-SNAPSHOT"
+version = "0.2.0"
 
 gradlePlugin {
     plugins {

@@ -34,7 +34,7 @@ pluginManagement {
 Then in your root 'build.gradle.kts' apply the plugin:
 ```kotlin
 plugins {
-    id("rocks.frieler.android.release") version "0.1.0"
+    id("rocks.frieler.android.release") version "0.2.0"
 }
 ```
 
