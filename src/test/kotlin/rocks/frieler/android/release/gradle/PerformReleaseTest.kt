@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.project.taskfactory.TaskIdentity
+import org.gradle.api.internal.tasks.TaskDependencyFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.service.ServiceRegistry
 import org.junit.jupiter.api.BeforeEach
@@ -27,6 +28,9 @@ internal class PerformReleaseTest {
         whenever(project.gradle).thenReturn(mockGradleInvocation)
         val mockObjectFactory = mock<ObjectFactory>()
         whenever(project.objects).thenReturn(mockObjectFactory)
+        val taskDependencyFactory = mock<TaskDependencyFactory>()
+        whenever(taskDependencyFactory.configurableDependency()).thenReturn(mock())
+        whenever(project.taskDependencyFactory).thenReturn(taskDependencyFactory)
         @Suppress("DEPRECATION")
         performReleaseTask = org.gradle.api.internal.AbstractTask.injectIntoNewInstance(project, TaskIdentity.create("performRelease", PerformRelease::class.java, project)) {
             PerformRelease()
