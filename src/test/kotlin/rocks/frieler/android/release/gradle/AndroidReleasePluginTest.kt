@@ -1,9 +1,9 @@
 package rocks.frieler.android.release.gradle
 
-import com.nhaarman.mockitokotlin2.mock
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
 
 internal class AndroidReleasePluginTest {
 

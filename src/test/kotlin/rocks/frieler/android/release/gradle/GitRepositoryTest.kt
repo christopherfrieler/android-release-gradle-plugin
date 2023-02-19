@@ -1,12 +1,12 @@
 package rocks.frieler.android.release.gradle
 
-import com.nhaarman.mockitokotlin2.*
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.process.ExecSpec
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.*
 import java.io.File
 import java.nio.charset.Charset
 

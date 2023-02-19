@@ -1,16 +1,17 @@
 package rocks.frieler.android.release.gradle
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.project.taskfactory.TaskIdentity
+import org.gradle.api.internal.tasks.TaskDependencyFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.service.ServiceRegistry
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.io.File
 import java.nio.file.Files
 
@@ -27,6 +28,9 @@ internal class PerformReleaseTest {
         whenever(project.gradle).thenReturn(mockGradleInvocation)
         val mockObjectFactory = mock<ObjectFactory>()
         whenever(project.objects).thenReturn(mockObjectFactory)
+        val taskDependencyFactory = mock<TaskDependencyFactory>()
+        whenever(taskDependencyFactory.configurableDependency()).thenReturn(mock())
+        whenever(project.taskDependencyFactory).thenReturn(taskDependencyFactory)
         @Suppress("DEPRECATION")
         performReleaseTask = org.gradle.api.internal.AbstractTask.injectIntoNewInstance(project, TaskIdentity.create("performRelease", PerformRelease::class.java, project)) {
             PerformRelease()
