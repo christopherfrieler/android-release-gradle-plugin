@@ -2,8 +2,8 @@ import org.gradle.jvm.tasks.Jar
 
 plugins {
     `java-gradle-plugin`
-    kotlin("jvm") version "1.4.32"
-    id("org.jetbrains.dokka") version "1.4.32"
+    kotlin("jvm") version "1.8.10"
+    id("org.jetbrains.dokka") version "1.7.20"
     id("maven-publish")
     id("signing")
     id("io.codearte.nexus-staging") version "0.22.0"
@@ -25,9 +25,15 @@ gradlePlugin {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "1.8"
+tasks {
+    compileJava {
+        sourceCompatibility = JavaVersion.VERSION_11.toString()
+        targetCompatibility = JavaVersion.VERSION_1_8.toString()
+    }
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
+        }
     }
 }
 
