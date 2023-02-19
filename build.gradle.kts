@@ -38,7 +38,8 @@ tasks {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
+    testImplementation(platform("org.junit:junit-bom:5.9.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
 
