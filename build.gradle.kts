@@ -40,6 +40,7 @@ tasks {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 }
 
@@ -50,14 +51,14 @@ tasks {
 
     register("javadocJar", Jar::class) {
         dependsOn(dokkaJavadoc)
-        from("${buildDir}/dokka/javadoc")
+        from("${layout.buildDirectory}/dokka/javadoc")
         archiveClassifier.set("javadoc")
     }
 }
 
 publishing {
     publications {
-        fun org.gradle.api.publish.maven.MavenPom.addCommonPublicationSettings() {
+        fun MavenPom.addCommonPublicationSettings() {
             url.set("https://github.com/christopherfrieler/android-release-gradle-plugin")
             licenses {
                 license {
