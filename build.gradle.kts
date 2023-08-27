@@ -2,8 +2,8 @@ import org.gradle.jvm.tasks.Jar
 
 plugins {
     `java-gradle-plugin`
-    kotlin("jvm") version "1.8.10"
-    id("org.jetbrains.dokka") version "1.7.20"
+    kotlin("jvm") version "1.9.0"
+    id("org.jetbrains.dokka") version "1.8.20"
     id("maven-publish")
     id("signing")
     id("io.codearte.nexus-staging") version "0.30.0"
@@ -38,9 +38,10 @@ tasks {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.9.2"))
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
 }
 
 tasks {
@@ -50,14 +51,14 @@ tasks {
 
     register("javadocJar", Jar::class) {
         dependsOn(dokkaJavadoc)
-        from("${buildDir}/dokka/javadoc")
+        from("${layout.buildDirectory}/dokka/javadoc")
         archiveClassifier.set("javadoc")
     }
 }
 
 publishing {
     publications {
-        fun org.gradle.api.publish.maven.MavenPom.addCommonPublicationSettings() {
+        fun MavenPom.addCommonPublicationSettings() {
             url.set("https://github.com/christopherfrieler/android-release-gradle-plugin")
             licenses {
                 license {

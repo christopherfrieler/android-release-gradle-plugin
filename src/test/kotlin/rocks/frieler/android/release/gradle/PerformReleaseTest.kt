@@ -1,10 +1,13 @@
 package rocks.frieler.android.release.gradle
 
+import org.gradle.api.internal.AbstractTask.injectIntoNewInstance
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.internal.project.taskfactory.TaskIdentity
+import org.gradle.api.internal.project.taskfactory.TaskIdentityFactory
 import org.gradle.api.internal.tasks.TaskDependencyFactory
+import org.gradle.api.internal.tasks.TaskExecutionAccessChecker
 import org.gradle.api.model.ObjectFactory
+import org.gradle.internal.id.ConfigurationCacheableIdFactory
 import org.gradle.internal.service.ServiceRegistry
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,6 +27,7 @@ internal class PerformReleaseTest {
     fun initTaskWithMockedProject() {
         val mockGradleInvocation = mock<GradleInternal>()
         val mockServiceregistry = mock<ServiceRegistry>()
+        whenever(mockServiceregistry.get(TaskExecutionAccessChecker::class.java)).thenReturn(mock())
         whenever(project.services).thenReturn(mockServiceregistry)
         whenever(project.gradle).thenReturn(mockGradleInvocation)
         val mockObjectFactory = mock<ObjectFactory>()
@@ -31,8 +35,12 @@ internal class PerformReleaseTest {
         val taskDependencyFactory = mock<TaskDependencyFactory>()
         whenever(taskDependencyFactory.configurableDependency()).thenReturn(mock())
         whenever(project.taskDependencyFactory).thenReturn(taskDependencyFactory)
-        @Suppress("DEPRECATION")
-        performReleaseTask = org.gradle.api.internal.AbstractTask.injectIntoNewInstance(project, TaskIdentity.create("performRelease", PerformRelease::class.java, project)) {
+        val idFactory = mock<ConfigurationCacheableIdFactory>()
+        whenever(idFactory.createId()).thenReturn(1L).thenThrow(IllegalStateException())
+        performReleaseTask = injectIntoNewInstance(
+            project,
+            TaskIdentityFactory(idFactory).create("performRelease", PerformRelease::class.java, project)
+        ) {
             PerformRelease()
         }
         performReleaseTask.scmRepository = mock()
