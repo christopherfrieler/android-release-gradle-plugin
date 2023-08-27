@@ -2,8 +2,8 @@ import org.gradle.jvm.tasks.Jar
 
 plugins {
     `java-gradle-plugin`
-    kotlin("jvm") version "1.8.10"
-    id("org.jetbrains.dokka") version "1.7.20"
+    kotlin("jvm") version "1.9.0"
+    id("org.jetbrains.dokka") version "1.8.20"
     id("maven-publish")
     id("signing")
     id("io.codearte.nexus-staging") version "0.30.0"
