@@ -1,12 +1,13 @@
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     `java-gradle-plugin`
-    kotlin("jvm") version "1.9.0"
-    id("org.jetbrains.dokka") version "1.8.20"
+    kotlin("jvm") version "2.1.20"
+    id("org.jetbrains.dokka") version "2.0.0"
     id("maven-publish")
     id("signing")
-    id("io.codearte.nexus-staging") version "0.30.0"
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 }
 
 repositories {
@@ -25,23 +26,21 @@ gradlePlugin {
     }
 }
 
-tasks {
-    compileJava {
-        sourceCompatibility = JavaVersion.VERSION_11.toString()
-        targetCompatibility = JavaVersion.VERSION_1_8.toString()
-    }
-    compileKotlin {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-        }
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_11
+}
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
     }
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation(platform("org.junit:junit-bom:5.11.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }
 
 tasks {
@@ -50,7 +49,7 @@ tasks {
     }
 
     register("javadocJar", Jar::class) {
-        dependsOn(dokkaJavadoc)
+        dependsOn(dokkaGenerate)
         from("${layout.buildDirectory}/dokka/javadoc")
         archiveClassifier.set("javadoc")
     }
@@ -114,10 +113,13 @@ signing {
     }
 }
 
-nexusStaging {
+nexusPublishing {
     packageGroup = project.group as String
-    stagingProfileId = System.getenv("SONATYPE_STAGING_PROFILE_ID")
-    val stagingRepository = publishing.repositories["sonatype-staging"] as MavenArtifactRepository
-    username = stagingRepository.credentials.username
-    password = stagingRepository.credentials.password
+    this.repositories {
+        sonatype {
+            stagingProfileId = System.getenv("SONATYPE_STAGING_PROFILE_ID")
+            username = System.getenv("SONATYPE_USERNAME")
+            password = System.getenv("SONATYPE_PASSWORD")
+        }
+    }
 }

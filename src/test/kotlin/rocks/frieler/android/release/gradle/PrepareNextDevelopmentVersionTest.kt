@@ -1,6 +1,6 @@
 package rocks.frieler.android.release.gradle
 
-import org.gradle.api.internal.AbstractTask.injectIntoNewInstance
+import org.gradle.api.DefaultTask.injectIntoNewInstance
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.project.taskfactory.TaskIdentityFactory

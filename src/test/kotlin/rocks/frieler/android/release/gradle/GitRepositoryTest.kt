@@ -2,6 +2,10 @@ package rocks.frieler.android.release.gradle
 
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.extensions.core.serviceOf
+import org.gradle.internal.service.ServiceRegistry
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
@@ -17,7 +21,7 @@ internal class GitRepositoryTest {
 
     @Test
     internal fun `can determine current branch`() {
-        whenever(project.exec(any<Action<in ExecSpec>>())).thenAnswer {
+        whenever(project.serviceOf<ExecOperations>().exec(any<Action<in ExecSpec>>())).thenAnswer {
             val execSpec = DummyExecSpec()
             it.getArgument<Action<in ExecSpec>>(0).execute(execSpec)
             when(execSpec.commandLine) {
@@ -36,7 +40,7 @@ internal class GitRepositoryTest {
 
     @Test
     internal fun `can check for no local changes`() {
-        whenever(project.exec(any<Action<in ExecSpec>>())).thenAnswer {
+        whenever(project.serviceOf<ExecOperations>().exec(any<Action<in ExecSpec>>())).thenAnswer {
             val execSpec = DummyExecSpec()
             it.getArgument<Action<in ExecSpec>>(0).execute(execSpec)
             when {
@@ -57,7 +61,7 @@ internal class GitRepositoryTest {
 
     @Test
     internal fun `detects unstaged local changes`() {
-        whenever(project.exec(any<Action<in ExecSpec>>())).thenAnswer {
+        whenever(project.serviceOf<ExecOperations>().exec(any<Action<in ExecSpec>>())).thenAnswer {
             val execSpec = DummyExecSpec()
             it.getArgument<Action<in ExecSpec>>(0).execute(execSpec)
             when {
@@ -78,7 +82,7 @@ internal class GitRepositoryTest {
 
     @Test
     internal fun `detects staged local changes`() {
-        whenever(project.exec(any<Action<in ExecSpec>>())).thenAnswer {
+        whenever(project.serviceOf<ExecOperations>().exec(any<Action<in ExecSpec>>())).thenAnswer {
             val execSpec = DummyExecSpec()
             it.getArgument<Action<in ExecSpec>>(0).execute(execSpec)
             when {
@@ -100,7 +104,7 @@ internal class GitRepositoryTest {
     @Test
     internal fun `can commit all changes`() {
         val message = "release-commit"
-        whenever(project.exec(any<Action<in ExecSpec>>())).thenAnswer {
+        whenever(project.serviceOf<ExecOperations>().exec(any<Action<in ExecSpec>>())).thenAnswer {
             val execSpec = DummyExecSpec()
             it.getArgument<Action<in ExecSpec>>(0).execute(execSpec)
             when(execSpec.commandLine) {
@@ -113,13 +117,13 @@ internal class GitRepositoryTest {
 
         gitRepository.commitAllChanges(message)
 
-        verify(project).exec(commandWith { commandLine == listOf("git", "commit", "-a", "-m", message) })
+        verify(project.serviceOf<ExecOperations>()).exec(commandWith { commandLine == listOf("git", "commit", "-a", "-m", message) })
     }
 
     @Test
     internal fun `can tag HEAD commit`() {
         val tagName = "new tag"
-        whenever(project.exec(any<Action<in ExecSpec>>())).thenAnswer {
+        whenever(project.serviceOf<ExecOperations>().exec(any<Action<in ExecSpec>>())).thenAnswer {
             val execSpec = DummyExecSpec()
             it.getArgument<Action<in ExecSpec>>(0).execute(execSpec)
             when(execSpec.commandLine) {
@@ -132,14 +136,18 @@ internal class GitRepositoryTest {
 
         gitRepository.tag(tagName)
 
-        verify(project).exec(commandWith { commandLine == listOf("git", "tag", tagName) })
+        verify(project.serviceOf<ExecOperations>()).exec(commandWith { commandLine == listOf("git", "tag", tagName) })
     }
 
     private fun mockGitManagedProject(): Project {
-        return mock {
+        return mock<ProjectInternal> {
             on { rootProject } doReturn this.mock
             val dotGitDirectory = mock<File> { on { isDirectory } doReturn true }
             on { file(".git") } doReturn dotGitDirectory
+            val serviceRegistry = mock<ServiceRegistry> {
+                on { get(ExecOperations::class.java) } doReturn mock<ExecOperations>()
+            }
+            on { services } doReturn serviceRegistry
         }
     }
 
