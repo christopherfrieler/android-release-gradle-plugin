@@ -15,7 +15,7 @@ jobs:
         uses: christopherfrieler/gradle-wrapper-action@v0.5.0
         with:
           arguments: |
-            check build kotlinSourcesJar javadocJar generateMetadataFileForPluginMavenPublication
+            check build kotlinSourcesJar javadocJar generatePomFileForPluginMavenPublication
           artifacts: |
             jars build/libs/android-release-gradle-plugin-*.jar
             pom build/publications/pluginMaven/pom-default.xml
