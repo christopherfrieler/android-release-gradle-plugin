@@ -1,6 +1,9 @@
 package rocks.frieler.android.release.gradle
 
 import org.gradle.api.Project
+import org.gradle.internal.extensions.core.serviceOf
+import org.gradle.process.ExecOperations
+import org.gradle.process.internal.DefaultExecOperations
 import java.io.ByteArrayOutputStream
 
 
@@ -16,7 +19,7 @@ class GitRepository(private val project: Project) {
 
     fun getCurrentBranch() : String {
         val stdOut = ByteArrayOutputStream()
-        project.exec {
+        project.serviceOf<ExecOperations>().exec {
             it.commandLine = "git branch --show-current".split(" ")
             it.standardOutput = stdOut
         }
@@ -24,11 +27,11 @@ class GitRepository(private val project: Project) {
     }
 
     fun hasLocalChanges() : Boolean {
-        val hasUnstagedChanges = project.exec {
+        val hasUnstagedChanges = project.serviceOf<ExecOperations>().exec {
             it.commandLine = "git diff-files --quiet".split(" ")
             it.isIgnoreExitValue = true
         }.exitValue != 0
-        val hasStagedChanges = project.exec {
+        val hasStagedChanges = project.serviceOf<ExecOperations>().exec {
             it.commandLine = "git diff-index HEAD --quiet".split(" ")
             it.isIgnoreExitValue = true
         }.exitValue != 0
@@ -36,13 +39,13 @@ class GitRepository(private val project: Project) {
     }
 
     fun commitAllChanges(commitMessage: String) {
-        project.exec {
+        project.serviceOf<ExecOperations>().exec {
             it.commandLine = listOf("git", "commit", "-a", "-m", commitMessage)
         }
     }
 
     fun tag(tagName: String) {
-        project.exec {
+        project.serviceOf<ExecOperations>().exec {
             it.commandLine = listOf("git", "tag", tagName)
         }
     }
