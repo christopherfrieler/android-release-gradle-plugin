@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     `java-gradle-plugin`
     kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.dokka") version "1.8.20"
+    id("org.jetbrains.dokka") version "2.0.0"
     id("maven-publish")
     id("signing")
     id("io.codearte.nexus-staging") version "0.30.0"
@@ -49,7 +49,7 @@ tasks {
     }
 
     register("javadocJar", Jar::class) {
-        dependsOn(dokkaJavadoc)
+        dependsOn(dokkaGenerate)
         from("${layout.buildDirectory}/dokka/javadoc")
         archiveClassifier.set("javadoc")
     }
