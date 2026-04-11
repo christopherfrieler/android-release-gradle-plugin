@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     `java-gradle-plugin`
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.3.20"
     id("org.jetbrains.dokka") version "2.2.0"
     id("maven-publish")
     id("signing")
