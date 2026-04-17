@@ -3,12 +3,14 @@ package rocks.frieler.android.release.gradle
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
 
 /**
  * Gradle-[org.gradle.api.Task] to perform a release, i.e. remove the '-SNAPSHOT'-suffix from the version specified in
  * the build-file, commit and tag this change.
  */
+@DisableCachingByDefault(because = "changing the version is an imperative task, that does not produce a cacheable artifact")
 open class PerformRelease : DefaultTask() {
 
     @get:Input
