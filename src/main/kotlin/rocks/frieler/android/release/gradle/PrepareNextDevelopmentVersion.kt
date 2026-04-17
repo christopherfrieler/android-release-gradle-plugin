@@ -52,7 +52,7 @@ open class PrepareNextDevelopmentVersion : DefaultTask() {
                 val major = versionMatch.groups[1]!!.value.toInt()
                 val minor = versionMatch.groups[2]!!.value.toInt()
                 nextSnapshotVersion = "$major.${minor + 1}.0-SNAPSHOT"
-                newGradleFile.appendLineWithSystemEnding(match.value.replace(currentVersion, nextSnapshotVersion!!))
+                newGradleFile.appendLineWithSystemEnding(match.value.replace(currentVersion, nextSnapshotVersion))
             } else {
                 newGradleFile.appendLineWithSystemEnding(line)
             }
@@ -60,7 +60,7 @@ open class PrepareNextDevelopmentVersion : DefaultTask() {
         project.file("./build.gradle.kts").writeText(newGradleFile.toString())
 
         check(nextSnapshotVersion != null) { "no version specification found!" }
-        return nextSnapshotVersion!!
+        return nextSnapshotVersion
     }
 
     private fun increaseVersionCode() {

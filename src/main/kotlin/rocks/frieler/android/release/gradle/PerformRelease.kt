@@ -42,7 +42,7 @@ open class PerformRelease : DefaultTask() {
                 val currentVersion = match.groups[1]!!.value
                 check(currentVersion.endsWith("-SNAPSHOT")) { "current version '$currentVersion' is not a SNAPSHOT!" }
                 releaseVersion = currentVersion.replace("-SNAPSHOT", "")
-                newGradleFile.appendLineWithSystemEnding(match.value.replace(currentVersion, releaseVersion!!))
+                newGradleFile.appendLineWithSystemEnding(match.value.replace(currentVersion, releaseVersion))
             } else {
                 newGradleFile.appendLineWithSystemEnding(line)
             }
@@ -50,6 +50,6 @@ open class PerformRelease : DefaultTask() {
         project.file("./build.gradle.kts").writeText(newGradleFile.toString())
 
         check(releaseVersion != null) { "no version specification found!" }
-        return releaseVersion!!
+        return releaseVersion
     }
 }
