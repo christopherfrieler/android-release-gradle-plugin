@@ -2,6 +2,7 @@ package rocks.frieler.android.release.gradle
 
 import org.gradle.api.DefaultTask.injectIntoNewInstance
 import org.gradle.api.internal.GradleInternal
+import org.gradle.api.internal.project.ProjectIdentity
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.project.taskfactory.TaskIdentityFactory
 import org.gradle.api.internal.tasks.TaskDependencyFactory
@@ -9,6 +10,7 @@ import org.gradle.api.internal.tasks.TaskExecutionAccessChecker
 import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.id.ConfigurationCacheableIdFactory
 import org.gradle.internal.service.ServiceRegistry
+import org.gradle.util.Path
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -17,9 +19,14 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Paths
 
 internal class PrepareNextDevelopmentVersionTest {
-    private val project: ProjectInternal = mock()
+    private val project: ProjectInternal = mock<ProjectInternal>().also {
+        whenever(it.rootDir).thenReturn(Files.createTempDirectory("test-project").toFile())
+        val buildDir = Paths.get(it.rootDir.path, "build")
+        whenever(it.projectIdentity).thenReturn(ProjectIdentity.forRootProject(Path.path(buildDir.toString()), "test-project"))
+    }
     private lateinit var prepareNextDevelopmentVersionTask: PrepareNextDevelopmentVersion
 
     @BeforeEach
@@ -51,7 +58,7 @@ internal class PrepareNextDevelopmentVersionTest {
         whenever(prepareNextDevelopmentVersionTask.scmRepository.hasLocalChanges()).thenReturn(false)
         val testRootBuildFile = prepareTestBuildFile("1.0.0_build.gradle.kts")
         whenever(project.file("./build.gradle.kts")).thenReturn(testRootBuildFile)
-        val testAppBuildFile = prepareTestBuildFile("versionCode_1_android_build.gradle.kts")
+        val testAppBuildFile = prepareTestBuildFile("versionCode_1_android_build.gradle.kts", "app")
         whenever(project.file("app/build.gradle.kts")).thenReturn(testAppBuildFile)
         val testChangelogFile = Files.createTempFile("changelog", "txt").toFile().apply {
             writeText("There was a change.${System.lineSeparator()}")
@@ -113,9 +120,11 @@ internal class PrepareNextDevelopmentVersionTest {
         assert(illegalStateException.message == "no version specification found!")
     }
 
-    private fun prepareTestBuildFile(buildFile: String): File {
-        return Files.createTempFile("build", "gradle.kts").toFile().apply {
-            val testBuildFile = File(this@PrepareNextDevelopmentVersionTest.javaClass.getResource("/test-gradle-files/$buildFile").toURI())
+    private fun prepareTestBuildFile(buildFile: String, subDir: String? = null): File {
+        val directory = if (subDir == null) project.rootDir else Files.createDirectories(Paths.get(project.rootDir.path, subDir)).toFile()
+        val testBuildFile = Files.createFile(Paths.get(directory.path, "build.gradle.kts")).toFile()
+        return testBuildFile.apply {
+            val testBuildFile = File(this@PrepareNextDevelopmentVersionTest.javaClass.getResource("/test-gradle-files/$buildFile")!!.toURI())
             testBuildFile.copyTo(this, overwrite = true)
         }
     }

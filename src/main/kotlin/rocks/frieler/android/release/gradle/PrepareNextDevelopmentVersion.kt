@@ -3,6 +3,7 @@ package rocks.frieler.android.release.gradle
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
 /**
  * Gradle-[org.gradle.api.Task] to prepare the next development version, i.e.
@@ -12,6 +13,7 @@ import org.gradle.api.tasks.TaskAction
  * - clear the changelog file
  * - commit the changes
  */
+@DisableCachingByDefault(because = "changing the version is an imperative task, that does not produce a cacheable artifact")
 open class PrepareNextDevelopmentVersion : DefaultTask() {
     @get:Input
     internal lateinit var scmRepository: GitRepository

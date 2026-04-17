@@ -2,6 +2,7 @@ package rocks.frieler.android.release.gradle
 
 import org.gradle.api.DefaultTask.injectIntoNewInstance
 import org.gradle.api.internal.GradleInternal
+import org.gradle.api.internal.project.ProjectIdentity
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.project.taskfactory.TaskIdentityFactory
 import org.gradle.api.internal.tasks.TaskDependencyFactory
@@ -9,6 +10,7 @@ import org.gradle.api.internal.tasks.TaskExecutionAccessChecker
 import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.id.ConfigurationCacheableIdFactory
 import org.gradle.internal.service.ServiceRegistry
+import org.gradle.util.Path
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -17,10 +19,15 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Paths
 
 
 internal class PerformReleaseTest {
-    private val project: ProjectInternal = mock()
+    private val project: ProjectInternal = mock<ProjectInternal>().also {
+        whenever(it.rootDir).thenReturn(Files.createTempDirectory("test-project").toFile())
+        val buildDir = Paths.get(it.rootDir.path, "build")
+        whenever(it.projectIdentity).thenReturn(ProjectIdentity.forRootProject(Path.path(buildDir.toString()), "test-project"))
+    }
     private lateinit var performReleaseTask: PerformRelease
 
     @BeforeEach
@@ -108,8 +115,8 @@ internal class PerformReleaseTest {
     }
 
     private fun prepareTestBuildFile(buildFile: String): File {
-        return Files.createTempFile("build", "gradle.kts").toFile().apply {
-            val testBuildFile = File(this@PerformReleaseTest.javaClass.getResource("/test-gradle-files/$buildFile").toURI())
+        return Files.createFile(Paths.get(project.rootDir.path, "build.gradle.kts")).toFile().apply {
+            val testBuildFile = File(this@PerformReleaseTest.javaClass.getResource("/test-gradle-files/$buildFile")!!.toURI())
             testBuildFile.copyTo(this, overwrite = true)
         }
     }

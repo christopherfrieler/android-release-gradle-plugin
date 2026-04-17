@@ -1,19 +1,19 @@
 package rocks.frieler.android.release.gradle
 
 import org.gradle.process.ExecResult
-import org.gradle.process.internal.ExecException
+import org.gradle.process.ProcessExecutionException
 import java.lang.IllegalArgumentException
 
 class DummyExecResult private constructor(
     private val exitValue: Int,
-    private val failure: ExecException?,
+    private val failure: ProcessExecutionException?,
 ) : ExecResult {
 
     override fun getExitValue() = exitValue
 
     override fun assertNormalExitValue(): ExecResult {
         if (exitValue != 0) {
-            throw ExecException("process exited with code $exitValue")
+            throw ProcessExecutionException("process exited with code $exitValue")
         }
         return this
     }
@@ -27,7 +27,7 @@ class DummyExecResult private constructor(
 
     companion object {
         fun success() = DummyExecResult(0, null)
-        fun failure(exitValue: Int, failure: ExecException? = null): DummyExecResult {
+        fun failure(exitValue: Int, failure: ProcessExecutionException? = null): DummyExecResult {
             if (exitValue == 0) {
                 throw IllegalArgumentException("exitValue for failed process must not be 0.")
             }
