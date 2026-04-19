@@ -39,4 +39,4 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_PUBLISHING_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PUBLISHING_PASSWORD }}
         with:
-          arguments: publishMavenPublicationToMavenCentralRepository
+          arguments: publishToMavenCentral
