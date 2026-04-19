@@ -1,13 +1,11 @@
-import org.gradle.jvm.tasks.Jar
+import com.vanniktech.maven.publish.DeploymentValidation
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     `java-gradle-plugin`
     kotlin("jvm") version "2.3.20"
     id("org.jetbrains.dokka") version "2.2.0"
-    id("maven-publish")
-    id("signing")
-    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
+    id("com.vanniktech.maven.publish") version "0.36.0"
 }
 
 repositories {
@@ -47,79 +45,27 @@ tasks {
     test {
         useJUnitPlatform()
     }
-
-    register("javadocJar", Jar::class) {
-        dependsOn(dokkaGenerate)
-        from("${layout.buildDirectory}/dokka/javadoc")
-        archiveClassifier.set("javadoc")
-    }
 }
 
-publishing {
-    publications {
-        fun MavenPom.addCommonPublicationSettings() {
-            url.set("https://github.com/christopherfrieler/android-release-gradle-plugin")
-            licenses {
-                license {
-                    name.set("MIT")
-                    url.set("https://opensource.org/licenses/MIT")
-                }
-            }
-            scm { url.set("https://github.com/christopherfrieler/android-release-gradle-plugin") }
-            developers {
-                developer { name.set("Christopher Frieler") }
+mavenPublishing {
+    pom {
+        name = project.name
+        description = "A Gradle plugin to automate scm-releases of android apps."
+        url = "https://github.com/christopherfrieler/android-release-gradle-plugin"
+        licenses {
+            license {
+                name = "MIT"
+                url = "https://opensource.org/licenses/MIT"
             }
         }
-
-        afterEvaluate {
-            getByName("pluginMaven", MavenPublication::class) {
-                pom {
-                    name.set(project.name)
-                    description.set("A Gradle plugin to automate scm-releases of android apps.")
-                    addCommonPublicationSettings()
-                }
-
-                artifact(tasks.kotlinSourcesJar)
-                artifact(tasks.getByName("javadocJar"))
-            }
-            getByName("${project.name}PluginMarkerMaven", MavenPublication::class) {
-                pom {
-                    name.set("${project.name}-marker")
-                    description.set("Gradle plugin marker for ${project.name}")
-                    addCommonPublicationSettings()
-                }
-            }
+        scm {
+            url = "https://github.com/christopherfrieler/android-release-gradle-plugin"
+        }
+        developers {
+            developer { name = "Christopher Frieler" }
         }
     }
-
-    repositories {
-        maven {
-            name = "sonatype-staging"
-            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("SONATYPE_USERNAME")
-                password = System.getenv("SONATYPE_PASSWORD")
-            }
-        }
-    }
-}
-
-signing {
-    System.getenv("SIGNING_KEY_ID")?.also { signingKeyId ->
-        sign(publishing.publications)
-        project.setProperty("signing.keyId", signingKeyId)
-        project.setProperty("signing.secretKeyRingFile", rootProject.file("$signingKeyId.gpg"))
-        project.setProperty("signing.password", System.getenv("SIGNING_KEY_PASSWORD"))
-    }
-}
-
-nexusPublishing {
-    packageGroup = project.group as String
-    this.repositories {
-        sonatype {
-            stagingProfileId = System.getenv("SONATYPE_STAGING_PROFILE_ID")
-            username = System.getenv("SONATYPE_USERNAME")
-            password = System.getenv("SONATYPE_PASSWORD")
-        }
-    }
+    publishToMavenCentral(
+        automaticRelease = true,
+        validateDeployment = DeploymentValidation.PUBLISHED)
 }
