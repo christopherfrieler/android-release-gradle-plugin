@@ -12,7 +12,7 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
       - name: Build and check plugin
-        uses: christopherfrieler/gradle-wrapper-action@v0.7.0
+        uses: christopherfrieler/gradle-wrapper-action@v0.7.1
         with:
           arguments: |
             check build kotlinSourcesJar dokkaJavadocJar generatePomFileForPluginMavenPublication
@@ -30,7 +30,7 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
       - name: Deploy to mavencentral
-        uses: christopherfrieler/gradle-wrapper-action@v0.7.0
+        uses: christopherfrieler/gradle-wrapper-action@v0.7.1
         env:
           ORG_GRADLE_PROJECT_signAllPublications: true
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
